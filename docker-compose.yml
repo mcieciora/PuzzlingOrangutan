@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  db:
+    container_name: puzzling_orangutan_db
+    image: mongo:latest
+    hostname: mongodb
+    volumes:
+      - './data:/data/db'
+    ports:
+      - "27017:27017"
+  app:
+    container_name: puzzling_orangutan_app
+    build: .
+    image: puzzling_orangutan_app
+    ports:
+      - "8007:8007"
+    links:
+      - db
