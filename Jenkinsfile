@@ -18,7 +18,7 @@ pipeline {
                     }
                 }
                 stage ('Compose images') {
-                    steps {
+                    stages {
                         stage ('Build image') {
                             steps {
                                 script {
