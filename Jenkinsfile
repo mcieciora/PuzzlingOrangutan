@@ -18,24 +18,26 @@ pipeline {
                     }
                 }
                 stage ('Compose images') {
-                    stage ('Build image') {
-                        steps {
-                            script {
-                                echo "STEP"
+                    steps {
+                        stage ('Build image') {
+                            steps {
+                                script {
+                                    echo "STEP"
+                                }
                             }
                         }
-                    }
-                    stage ('Deploy image') {
-                        steps {
-                            script {
-                                echo "STEP"
+                        stage ('Deploy image') {
+                            steps {
+                                script {
+                                    echo "STEP"
+                                }
                             }
                         }
                     }
                 }
             }
         }
-        stage('Prepare for tests') {
+        stage('Run tests') {
             parallel {
                 stage ('Database tests') {
                     steps {
