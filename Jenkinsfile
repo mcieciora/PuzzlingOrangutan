@@ -18,19 +18,17 @@ pipeline {
                     }
                 }
                 stage ('Compose images') {
-                    stages {
-                        stage ('Build image') {
-                            steps {
-                                script {
-                                    echo "STEP"
-                                }
+                    stage ('Build image') {
+                        steps {
+                            script {
+                                echo "STEP"
                             }
                         }
-                        stage ('Deploy image') {
-                            steps {
-                                script {
-                                    echo "STEP"
-                                }
+                    }
+                    stage ('Deploy image') {
+                        steps {
+                            script {
+                                echo "STEP"
                             }
                         }
                     }
