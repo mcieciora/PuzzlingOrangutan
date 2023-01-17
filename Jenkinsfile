@@ -1,7 +1,8 @@
 pipeline {
     agent {
         dockerfile {
-            filename 'automated_tests/Dockerfile'
+            filename 'Dockerfile'
+            dir 'automated_tests'
         }
     }
     stages {
