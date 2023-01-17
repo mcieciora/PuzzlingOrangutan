@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        dockerfile {
+            filename 'automated_tests/Dockerfile'
+        }
+    }
     stages {
         stage('Prepare for tests') {
             parallel {
@@ -7,7 +11,7 @@ pipeline {
                     steps {
                         script {
                             dir('automated_tests/tools') {
-                                def reqs_verification = sh(script: 'python3.11 verify_requirements.py', returnStdout: true)
+                                def reqs_verification = sh(script: 'python3.10 verify_requirements.py', returnStdout: true)
                                 if (reqs_verification.contains('[ERR]')) {
                                     error("${reqs_verification}")
                                 }
