@@ -56,6 +56,13 @@ pipeline {
                 }
             }
         }
+        stage ('Start app and database') {
+            steps {
+                script {
+                    sh 'docker compose up -d'
+                }
+            }
+        }
         stage ('Execute tests') {
             parallel {
                 stage ('Database tests') {
