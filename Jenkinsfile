@@ -40,7 +40,7 @@ pipeline {
                 stage ('Verify requirements') {
                     steps {
                         script {
-                            def reqs_verification = sh(script: 'docker run docker_test_image --rm automated_tests/tools/verify_requirements.py', returnStdout: true)
+                            def reqs_verification = sh(script: 'docker run --rm docker_test_image automated_tests/tools/verify_requirements.py', returnStdout: true)
                             if (reqs_verification.contains('[ERR]')) {
                                 error("${reqs_verification}")
                             }
@@ -52,6 +52,7 @@ pipeline {
                         script {
                             def code_linting_image = docker.image('docker_test_image')
                             image.inside {
+                                sh 'pwd'
                                 sh 'python3.11 -m pylint automated_tests src --max-line-length=120 --disable=C0114'
                                 sh 'date > test.txt'
                                 archiveArtifacts 'test.txt'
@@ -73,14 +74,14 @@ pipeline {
                 stage ('Database tests') {
                     steps {
                         script {
-                            sh 'docker run docker_test_image --rm -m pytest -k pymongo -v --junitxml=pymongo_results.xml'
+                            sh 'docker run --rm docker_test_image -m pytest -k pymongo -v --junitxml=pymongo_results.xml'
                         }
                     }
                 }
                 stage ('Endpoints tests') {
                     steps {
                         script {
-                            sh 'docker run docker_test_image --rm -m pytest -k endpoints -v --junitxml=endpoints_results.xml'
+                            sh 'docker run --rm docker_test_image -m pytest -k endpoints -v --junitxml=endpoints_results.xml'
                         }
                     }
                 }
