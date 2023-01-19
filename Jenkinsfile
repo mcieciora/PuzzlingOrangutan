@@ -50,14 +50,8 @@ pipeline {
                 stage ('Code linting') {
                     steps {
                         script {
-                            def code_linting_image = docker.image('docker_test_image')
-                            image.inside {
-                                sh 'pwd'
-                                sh 'python3.11 -m pylint automated_tests src --max-line-length=120 --disable=C0114'
-                                sh 'date > test.txt'
-                                archiveArtifacts 'test.txt'
-                            }
-                        }// sh 'docker run docker_test_image --rm -m pylint automated_tests src --max-line-length=120 --disable=C0114'
+                            sh 'docker run --rm docker_test_image -m pylint automated_tests src --max-line-length=120 --disable=C0114'
+                        }
                     }
                 }
             }
@@ -74,14 +68,28 @@ pipeline {
                 stage ('Database tests') {
                     steps {
                         script {
-                            sh 'docker run --rm docker_test_image -m pytest -k pymongo -v --junitxml=pymongo_results.xml'
+                            sh 'docker run --name database_tests docker_test_image -m pytest -k pymongo -v --junitxml=pymongo_results.xml'
+                        }
+                    }
+                    post {
+                        always {
+                            sh 'docker cp database_tests:/app/pymongo_results.xml .'
+                            archiveArtifacts 'pymongo_results.xml'
+                            sh 'docker rm database_tests'
                         }
                     }
                 }
                 stage ('Endpoints tests') {
                     steps {
                         script {
-                            sh 'docker run --rm docker_test_image -m pytest -k endpoints -v --junitxml=endpoints_results.xml'
+                            sh 'docker run --name endpoints_tests docker_test_image -m pytest -k endpoints -v --junitxml=endpoints_results.xml'
+                        }
+                    }
+                    post {
+                        always {
+                            sh 'docker cp endpoints_tests:/app/pymongo_results.xml .'
+                            archiveArtifacts 'endpoints_results.xml'
+                            sh 'docker rm endpoints_tests'
                         }
                     }
                 }
@@ -93,8 +101,10 @@ pipeline {
             script {
                 sh 'docker compose down'
                 sh 'docker rmi -f docker_test_image puzzling_orangutan_db puzzling_orangutan_app'
+                dir ('.') {
+                    deleteDir()
+                }
             }
-            cleanWs()
         }
     }
 }
