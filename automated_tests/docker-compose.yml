@@ -1,0 +1,19 @@
+version: '3.9'
+services:
+  app:
+    image:  jenkins_dockerized
+    container_name: jenkins
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: jenkins.Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./jenkins:/var/jenkins_home
+      - ./casc.yml:/var/jenkins_conf/casc.yml
+      # This is not right to use host socket
+      # but as far as it is all experimental it is ok for now
+      - //var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - CASC_JENKINS_CONFIG=/var/jenkins_conf

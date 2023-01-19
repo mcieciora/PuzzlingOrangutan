@@ -1,0 +1,35 @@
+jenkins:
+  systemMessage: "Welcome to Jenkins!. Hope you will have great time here."
+  numExecutors: 5
+  mode: NORMAL
+  scmCheckoutRetryCount: 1
+  labelString: "master"
+  crumbIssuer: "standard"
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+       - id: admin_user
+         password: J3nKin5_PA$$
+       - id: jenkins_user
+         password: jenkins_pass
+  authorizationStrategy:
+    roleBased:
+      roles:
+        global:
+          - name: "admin_user"
+            description: "Jenkins administrators"
+            permissions:
+              - "Overall/Administer"
+            assignments:
+              - "admin_user"
+          - name: "jenkins_user"
+            description: "Read-only users"
+            permissions:
+              - "Overall/Read"
+              - "Job/Read"
+            assignments:
+              - "jenkins_user"
+unclassified:
+  location:
+    url: http://localhost:8080
