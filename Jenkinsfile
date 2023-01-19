@@ -75,4 +75,14 @@ pipeline {
             }
         }
     }
+    post {
+        always {
+            script {
+                sh 'docker compose down'
+                sh 'docker stop docker_test_image'
+                sh 'docker rmi -f docker_test_image puzzling_orangutan_db puzzling_orangutan_app'
+            }
+            cleanWs()
+        }
+    }
 }
