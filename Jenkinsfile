@@ -49,13 +49,14 @@ pipeline {
                 }
                 stage ('Code linting') {
                     steps {
-                        def code_linting_image = docker.image('docker_test_image')
-                        image.inside {
-                            sh 'python3.11 -m pylint automated_tests src --max-line-length=120 --disable=C0114'
-                            sh 'date > test.txt'
-                            archiveArtifacts 'test.txt'
-                        }
-                        // sh 'docker run docker_test_image --rm -m pylint automated_tests src --max-line-length=120 --disable=C0114'
+                        script {
+                            def code_linting_image = docker.image('docker_test_image')
+                            image.inside {
+                                sh 'python3.11 -m pylint automated_tests src --max-line-length=120 --disable=C0114'
+                                sh 'date > test.txt'
+                                archiveArtifacts 'test.txt'
+                            }
+                        }// sh 'docker run docker_test_image --rm -m pylint automated_tests src --max-line-length=120 --disable=C0114'
                     }
                 }
             }
