@@ -35,12 +35,12 @@ pipeline {
                 }
             }
         }
-        stage ('Before tests checks') {
+        stage ('Test preparation') {
             parallel {
                 stage ('Verify requirements') {
                     steps {
                         script {
-                            def reqs_verification = sh('docker run docker_test_image automated_tests/tools/verify_requirements.py', returnStdout: true)
+                            def reqs_verification = sh(script: 'docker run docker_test_image automated_tests/tools/verify_requirements.py', returnStdout: true)
                             if (reqs_verification.contains('[ERR]')) {
                                 error("${reqs_verification}")
                             }
@@ -51,6 +51,24 @@ pipeline {
                     steps {
                         script {
                             sh 'docker run docker_test_image -m pylint automated_tests src --max-line-length=120 --disable=C0114'
+                        }
+                    }
+                }
+            }
+        }
+        stage ('Execute tests') {
+            parallel {
+                stage ('Database tests') {
+                    steps {
+                        script {
+                            sh 'docker run docker_test_image -m pytest -k pymongo -v --junitxml=pymongo_results.xml'
+                        }
+                    }
+                }
+                stage ('Endpoints tests') {
+                    steps {
+                        script {
+                            sh 'docker run docker_test_image -m pytest -k endpoints -v --junitxml=endpoints_results.xml'
                         }
                     }
                 }
