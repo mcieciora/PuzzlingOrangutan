@@ -9,5 +9,5 @@ COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
 RUN jenkins-plugin-cli -f /usr/share/jenkins/ref/plugins.txt
 
 # Install docker
-RUN apk add --update docker openrc
+RUN apk add --update docker openrc docker-cli-compose
 RUN rc-update add docker boot
