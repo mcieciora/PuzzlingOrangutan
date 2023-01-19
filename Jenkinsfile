@@ -59,7 +59,7 @@ pipeline {
         stage ('Start app and database') {
             steps {
                 script {
-                    sh 'docker compose up -d --rm'
+                    sh 'docker compose up -d'
                 }
             }
         }
