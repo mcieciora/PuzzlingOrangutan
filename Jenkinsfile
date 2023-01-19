@@ -16,18 +16,6 @@ pipeline {
                             sh 'docker compose build'
                         }
                     }
-                    stage ('Deploy image') {
-                        when {
-                            expression {
-                                return env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'release' || env.BRANCH_NAME == 'master'
-                                }
-                            }
-                            steps {
-                                script {
-                                    echo "Deploy app image to registry"
-                                }
-                            }
-                        }
                 }
             }
         }
