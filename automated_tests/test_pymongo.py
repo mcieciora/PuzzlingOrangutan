@@ -1,5 +1,6 @@
 from pytest import mark, raises
-from src.exceptions import *
+from src.exceptions import UsernameAlreadyExists, UsernameDoesntExists, ServiceAlreadyExists, ServiceDoesntExists, \
+    ServiceIsAlreadySubscribed
 
 
 @mark.pymongo

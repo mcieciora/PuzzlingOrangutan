@@ -1,50 +1,74 @@
 from bottle import route, run
 from pymongo_db import MongoDb
-import src.exceptions
+import exceptions
 
 
 @route("/")
 def index():
+    """
+    Main endpoint.
+    :return: Status message 200 if app and database is running.
+    """
     return_value = {"status": 200, "message": "I'm ok, you?"}
     return dict(data=return_value)
 
 
 @route("/create_user/<username>")
 def create_user(username):
+    """
+    Create user endpoint.
+    :param username: user to create string value
+    :return: Status 200 if user was created else status 400.
+    """
     try:
         mongo_client.create_user(username)
         return_value = {"status": 200, "message": f"User {username} created successfully."}
-    except src.exceptions.UsernameAlreadyExists:
+    except exceptions.UsernameAlreadyExists:
         return_value = {"status": 400, "message": "Cannot create user cause username already exists"}
     return dict(data=return_value)
 
 
 @route("/create_service/<service_name>")
 def create_service(service_name):
+    """
+    Create service endpoint.
+    :param service_name: service to create string value
+    :return: Status 200 if service was created else status 400.
+    """
     try:
         mongo_client.create_service(service_name)
         return_value = {"status": 200, "message": f"Service {service_name} created successfully"}
-    except src.exceptions.ServiceAlreadyExists:
+    except exceptions.ServiceAlreadyExists:
         return_value = {"status": 400, "message": "Cannot create service cause it already exists"}
     return dict(data=return_value)
 
 
 @route("/subscribe/<username>/<service>")
 def subscribe(username, service):
+    """
+    Subscribe endpoint.
+    :param username: user string value
+    :param service: service to subscribe string value
+    :return: Status 200 if subscription was successful else status 400 with various return messages.
+    """
     try:
         mongo_client.subscribe_service(username, service)
         return_value = {"status": 200, "message": f"User {username} subscribed to {service}."}
-    except src.exceptions.UsernameDoesntExists:
+    except exceptions.UsernameDoesntExists:
         return_value = {"status": 400, "message": "Cannot subscribe service cause username does not exist."}
-    except src.exceptions.ServiceDoesntExists:
+    except exceptions.ServiceDoesntExists:
         return_value = {"status": 400, "message": "Cannot subscribe service cause service does not exist."}
-    except src.exceptions.ServiceIsAlreadySubscribed:
+    except exceptions.ServiceIsAlreadySubscribed:
         return_value = {"status": 400, "message": "Cannot subscribe service cause it is already subscribed."}
     return dict(data=return_value)
 
 
 @route("/get_subscriptions")
 def get_subscriptions():
+    """
+    Get subscriptions endpoint.
+    :return: List of all subscriptions in String<user_name>: List<service_name> convention.
+    """
     return_dict = {}
     for element in mongo_client.find_all({"object_type": "user"}):
         return_dict[element["username"]] = element["services"]
@@ -53,6 +77,10 @@ def get_subscriptions():
 
 @route("/get_services")
 def get_services():
+    """
+    Get services endpoint.
+    :return: List of all services in String<service_name>: String<service_status>
+    """
     return_dict = {}
     for service in mongo_client.find_all({"object_type": "service"}):
         return_dict[service["service"]] = service["status"]
