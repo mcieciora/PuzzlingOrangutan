@@ -69,7 +69,7 @@ pipeline {
                 stage ('Database tests') {
                     steps {
                         script {
-                            sh 'docker run --network=host --name database_tests docker_test_image -m pytest -k pymongo -v --junitxml=pymongo_results.xml automated_tests'
+                            sh 'docker run --network=puzzlingorangutan_default --name database_tests docker_test_image -m pytest -k pymongo -v --junitxml=pymongo_results.xml automated_tests'
                         }
                     }
                     post {
@@ -105,6 +105,7 @@ pipeline {
                 dir ('.') {
                     deleteDir()
                 }
+                junit '**/*.xml'
             }
         }
     }
