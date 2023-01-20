@@ -64,6 +64,11 @@ pipeline {
                 }
             }
         }
+        stage ('WAIT') {
+            steps {
+                input('Do you want to proceed?')
+            }
+        }
         stage ('Database tests') {
             steps {
                 script {
