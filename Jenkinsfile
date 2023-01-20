@@ -64,35 +64,38 @@ pipeline {
                 }
             }
         }
-        stage ('Execute tests') {
-            parallel {
-                stage ('Database tests') {
-                    steps {
-                        script {
-                            sh 'docker run --network=puzzlingorangutan_default --name database_tests docker_test_image -m pytest -k pymongo -v --junitxml=pymongo_results.xml automated_tests'
-                        }
-                    }
-                    post {
-                        always {
-                            sh 'docker cp database_tests:/app/pymongo_results.xml .'
-                            archiveArtifacts 'pymongo_results.xml'
-                            sh 'docker rm database_tests'
-                        }
-                    }
+        stage ('Database tests') {
+            steps {
+                script {
+                    sh 'docker run --network=puzzlingorangutan_default --name database_tests docker_test_image -m pytest -k pymongo -v --junitxml=pymongo_results.xml automated_tests'
                 }
-                stage ('Endpoints tests') {
-                    steps {
-                        script {
-                            sh 'docker run --network=host --name endpoints_tests docker_test_image -m pytest -k endpoints -v --junitxml=endpoints_results.xml automated_tests'
-                        }
-                    }
-                    post {
-                        always {
-                            sh 'docker cp endpoints_tests:/app/endpoints_results.xml .'
-                            archiveArtifacts 'endpoints_results.xml'
-                            sh 'docker rm endpoints_tests'
-                        }
-                    }
+            }
+            post {
+                always {
+                    sh 'docker cp database_tests:/app/pymongo_results.xml .'
+                    archiveArtifacts 'pymongo_results.xml'
+                    sh 'docker rm database_tests'
+                }
+            }
+        }
+        stage ('Endpoints tests') {
+            steps {
+                script {
+                    sh 'docker run --network=host --name endpoints_tests docker_test_image -m pytest -k endpoints -v --junitxml=endpoints_results.xml automated_tests'
+                }
+            }
+            post {
+                always {
+                    sh 'docker cp endpoints_tests:/app/endpoints_results.xml .'
+                    archiveArtifacts 'endpoints_results.xml'
+                    sh 'docker rm endpoints_tests'
+                }
+            }
+        }
+        stage ('Upload results') {
+            steps {
+                script {
+                    echo 'Upload results to ExultantRhino if develop|master|release branch'
                 }
             }
         }
@@ -101,11 +104,11 @@ pipeline {
         always {
             script {
                 sh 'docker compose down'
-                sh 'docker rmi -f docker_test_image puzzling_orangutan_db puzzling_orangutan_app'
+                // sh 'docker rmi -f docker_test_image puzzling_orangutan_db puzzling_orangutan_app'
                 dir ('.') {
                     deleteDir()
                 }
-                junit '**/*.xml'
+                junit '*.xml'
             }
         }
     }
