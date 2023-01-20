@@ -12,14 +12,14 @@ pipeline {
                 }
                 stage ('Compose app') {
                     stages {
-                        stage ('Build app') {
+                        stage ('Build app image') {
                             steps {
                                 script {
                                     sh 'docker compose build'
                                 }
                             }
                         }
-                        stage ('Deploy image') {
+                        stage ('Deploy app image') {
                             when {
                                 expression {
                                     return env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'release' || env.BRANCH_NAME == 'master'
@@ -50,7 +50,8 @@ pipeline {
                 stage ('Code linting') {
                     steps {
                         script {
-                            sh 'docker run --rm docker_test_image -m pylint automated_tests src --max-line-length=120 --disable=C0114'
+                            sh 'docker run --rm docker_test_image -m pylint automated_tests --max-line-length=120 --disable=C0114,E0401'
+                            sh 'docker run --rm docker_test_image -m pylint src --max-line-length=120 --disable=C0114,E0401'
                         }
                     }
                 }
@@ -68,7 +69,7 @@ pipeline {
                 stage ('Database tests') {
                     steps {
                         script {
-                            sh 'docker run --name database_tests docker_test_image -m pytest -k pymongo -v --junitxml=pymongo_results.xml'
+                            sh 'docker run --network=host --name database_tests docker_test_image -m pytest -k pymongo -v --junitxml=pymongo_results.xml automated_tests'
                         }
                     }
                     post {
@@ -82,12 +83,12 @@ pipeline {
                 stage ('Endpoints tests') {
                     steps {
                         script {
-                            sh 'docker run --name endpoints_tests docker_test_image -m pytest -k endpoints -v --junitxml=endpoints_results.xml'
+                            sh 'docker run --network=host --name endpoints_tests docker_test_image -m pytest -k endpoints -v --junitxml=endpoints_results.xml automated_tests'
                         }
                     }
                     post {
                         always {
-                            sh 'docker cp endpoints_tests:/app/pymongo_results.xml .'
+                            sh 'docker cp endpoints_tests:/app/endpoints_results.xml .'
                             archiveArtifacts 'endpoints_results.xml'
                             sh 'docker rm endpoints_tests'
                         }

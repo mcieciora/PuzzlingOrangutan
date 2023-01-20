@@ -1,6 +1,6 @@
 from bottle import route, run
-from src.pymongo_db import MongoDb
-from src.exceptions import UsernameDoesntExists, UsernameAlreadyExists, ServiceDoesntExists, ServiceAlreadyExists, \
+from pymongo_db import MongoDb
+from exceptions import UsernameDoesntExists, UsernameAlreadyExists, ServiceDoesntExists, ServiceAlreadyExists, \
     ServiceIsAlreadySubscribed
 
 

@@ -59,7 +59,7 @@ def test__create_service_when_service_name_provided_by_endpoint():
     expected_data = {"status": 200, "message": "Service new_service created successfully"}
     actual_data = get("http://localhost:8007/create_service/new_service", timeout=5)
     assert actual_data.json()["data"] == expected_data, f"Endpoint return is different than expected. " \
-                                                 f"Actual: {actual_data}, Expected: {expected_data}"
+                                                        f"Actual: {actual_data}, Expected: {expected_data}"
 
 
 @mark.endpoints
@@ -71,7 +71,7 @@ def test__create_service_when_username_provided_by_endpoint():
     expected_data = {"status": 400, "message": "Cannot create service cause it already exists"}
     actual_data = get("http://localhost:8007/create_service/new_service", timeout=5)
     assert actual_data.json()["data"] == expected_data, f"Endpoint return is different than expected. " \
-                                                 f"Actual: {actual_data}, Expected: {expected_data}"
+                                                        f"Actual: {actual_data}, Expected: {expected_data}"
 
 
 @mark.endpoints
@@ -83,7 +83,7 @@ def test__subscribe_to_service_with_proper_values_by_endpoint():
     expected_data = {"status": 200, "message": "User new_user subscribed to new_service."}
     actual_data = get("http://localhost:8007/subscribe/new_user/new_service", timeout=5)
     assert actual_data.json()["data"] == expected_data, f"Endpoint return is different than expected. " \
-                                                 f"Actual: {actual_data}, Expected: {expected_data}"
+                                                        f"Actual: {actual_data}, Expected: {expected_data}"
 
 
 @mark.endpoints
@@ -95,7 +95,7 @@ def test__subscribe_service_with_wrong_username_provided_by_endpoint():
     expected_data = {"status": 400, "message": "Cannot subscribe service cause username does not exist."}
     actual_data = get("http://localhost:8007/subscribe/not_existing/new_service", timeout=5)
     assert actual_data.json()["data"] == expected_data, f"Endpoint return is different than expected. " \
-                                                 f"Actual: {actual_data}, Expected: {expected_data}"
+                                                        f"Actual: {actual_data}, Expected: {expected_data}"
 
 
 @mark.endpoints
@@ -119,7 +119,7 @@ def test__subscribe_service_with_already_active_subscription_by_endpoint():
     expected_data = {"status": 400, "message": "Cannot subscribe service cause it is already subscribed."}
     actual_data = get("http://localhost:8007/subscribe/new_user/new_service", timeout=5)
     assert actual_data.json()["data"] == expected_data, f"Endpoint return is different than expected. " \
-                                                 f"Actual: {actual_data}, Expected: {expected_data}"
+                                                        f"Actual: {actual_data}, Expected: {expected_data}"
 
 
 @mark.endpoints
@@ -143,4 +143,4 @@ def test__get_list_of_all_services_by_endpoint():
     expected_data = {"new_service": "not_finished"}
     actual_data = get("http://localhost:8007/get_services", timeout=5)
     assert actual_data.json() == expected_data, f"Endpoint return is different than expected. " \
-                                                 f"Actual: {actual_data}, Expected: {expected_data}"
+                                                f"Actual: {actual_data}, Expected: {expected_data}"
