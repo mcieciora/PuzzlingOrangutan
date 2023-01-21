@@ -1,5 +1,6 @@
 from pytest import mark, raises
-from src.exceptions import *
+from src.exceptions import UsernameAlreadyExists, UsernameDoesntExists, ServiceAlreadyExists, ServiceDoesntExists, \
+    ServiceIsAlreadySubscribed
 
 
 @mark.pymongo
@@ -13,7 +14,7 @@ def test__create_user_when_username_provided(test_db):
     test_data = {"username": "new_user"}
     expected_data = {"username": "new_user", "services": [], "object_type": "user"}
     actual_data = test_db.create_user(test_data["username"])
-    assert actual_data != -1, f"Inserted object return id is -1."
+    assert actual_data != -1, "Inserted object return id is -1."
     actual_data = test_db.find(test_data)
     assert actual_data == expected_data, f"Actual data is different that expected. Actual: {actual_data}, Expected: 1"
 
@@ -44,7 +45,7 @@ def test__create_service_when_service_name_provided(test_db):
     test_data = {"service": "new_service"}
     expected_data = {"service": "new_service", "status": "not_finished", "object_type": "service"}
     actual_data = test_db.create_service(test_data["service"])
-    assert actual_data != -1, f"Inserted object return id is -1."
+    assert actual_data != -1, "Inserted object return id is -1."
     actual_data = test_db.find(test_data)
     assert actual_data == expected_data, f"Actual data is different that expected. " \
                                          f"Actual: {actual_data}, Expected: {expected_data}"

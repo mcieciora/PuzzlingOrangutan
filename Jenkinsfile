@@ -1,47 +1,25 @@
 pipeline {
     agent any
     stages {
-        stage('Prepare for tests') {
+        stage ('Prepare images') {
             parallel {
-                stage ('Verify requirements') {
+                stage ('Build test image') {
                     steps {
                         script {
-                            dir('automated_tests/tools') {
-                                def reqs_verification = sh(script: 'python3.11 verify_requirements.py', returnStdout: true)
-                                if (reqs_verification.contains('[ERR]')) {
-                                    error("${reqs_verification}")
-                                }
-                            }
+                            sh 'docker build -t docker_test_image -f automated_tests/test.Dockerfile .'
                         }
                     }
                 }
-                stage ('Code linting') {
-                    steps {
-                        script {
-                            dir("automated_tests/") {
-                                sh 'tox -e lint src'
-                                sh 'tox -e lint automated_tests'
-                            }
-                        }
-                    }
-                }
-                stage ('Compose images') {
+                stage ('Compose app') {
                     stages {
-                        stage ('Build image') {
+                        stage ('Build app image') {
                             steps {
                                 script {
-                                    sh 'docker compose up -d'
-                                }
-                            }
-                            post {
-                                always {
-                                    script {
-                                        sh 'docker compose down'
-                                    }
+                                    sh 'docker compose build'
                                 }
                             }
                         }
-                        stage ('Deploy image') {
+                        stage ('Deploy app image') {
                             when {
                                 expression {
                                     return env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'release' || env.BRANCH_NAME == 'master'
@@ -49,7 +27,7 @@ pipeline {
                             }
                             steps {
                                 script {
-                                    echo "STEP"
+                                    echo "Deploy app image to registry"
                                 }
                             }
                         }
@@ -57,70 +35,85 @@ pipeline {
                 }
             }
         }
-        stage('Run tests') {
+        stage ('Test preparation') {
             parallel {
-                stage ('Database tests') {
+                stage ('Verify requirements') {
                     steps {
                         script {
-                            sh 'docker compose up -d'
-                            sh "sed -i 's/mongodb/localhost/1' src/pymongo_db.py"
-                            dir("automated_tests/") {
-                                sh "tox -e pymongo"
-                            }
-                        }
-                    }
-                    post {
-                        always {
-                            script {
-                                sh 'docker compose down'
-                                sh "sed -i 's/localhost/mongodb/1' src/pymongo_db.py"
+                            def reqs_verification = sh(script: 'docker run --rm docker_test_image automated_tests/tools/verify_requirements.py', returnStdout: true)
+                            if (reqs_verification.contains('[ERR]')) {
+                                error("${reqs_verification}")
                             }
                         }
                     }
                 }
-                stage ('Endpoints') {
+                stage ('Code linting') {
                     steps {
                         script {
-                            sh 'docker compose up -d'
-                            sh "sed -i 's/mongodb/localhost/1' src/pymongo_db.py"
-                            dir("automated_tests/") {
-                                sh "tox -e pymongo"
-                            }
-                        }
-                    }
-                    post {
-                        always {
-                            script {
-                                sh 'docker compose down'
-                                sh "sed -i 's/localhost/mongodb/1' src/pymongo_db.py"
-                            }
+                            sh 'docker run --rm docker_test_image -m pylint automated_tests --max-line-length=120 --disable=C0114,E0401'
+                            sh 'docker run --rm docker_test_image -m pylint src --max-line-length=120 --disable=C0114,E0401'
                         }
                     }
                 }
             }
         }
-        stage ('Scan for skipped tests') {
-            when {
-                expression {
-                    return env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'release'
-                }
-            }
+        stage ('Start app and database') {
             steps {
                 script {
-                    echo "STEP"
+                    sh 'docker compose up -d'
+                }
+            }
+        }
+        stage ('WAIT') {
+            steps {
+                input('Do you want to proceed?')
+            }
+        }
+        stage ('Database tests') {
+            steps {
+                script {
+                    sh 'docker run --network=puzzlingorangutan_default --name database_tests docker_test_image -m pytest -k pymongo -v --junitxml=pymongo_results.xml automated_tests'
+                }
+            }
+            post {
+                always {
+                    sh 'docker cp database_tests:/app/pymongo_results.xml .'
+                    archiveArtifacts 'pymongo_results.xml'
+                    sh 'docker rm database_tests'
+                }
+            }
+        }
+        stage ('Endpoints tests') {
+            steps {
+                script {
+                    sh 'docker run --network=host --name endpoints_tests docker_test_image -m pytest -k endpoints -v --junitxml=endpoints_results.xml automated_tests'
+                }
+            }
+            post {
+                always {
+                    sh 'docker cp endpoints_tests:/app/endpoints_results.xml .'
+                    archiveArtifacts 'endpoints_results.xml'
+                    sh 'docker rm endpoints_tests'
                 }
             }
         }
         stage ('Upload results') {
-            when {
-                expression {
-                    return env.BRANCH_NAME == 'develop' || env.BRANCH_NAME == 'release' || env.BRANCH_NAME == 'master'
-                }
-            }
             steps {
                 script {
-                    echo "STEP"
+                    echo 'Upload results to ExultantRhino if develop|master|release branch'
                 }
+            }
+        }
+    }
+    post {
+        always {
+            script {
+                sh 'docker compose down'
+                // sh 'docker rmi -f docker_test_image puzzling_orangutan_db puzzling_orangutan_app'
+                dir ('.') {
+                    deleteDir()
+                }
+                junit '*.xml'
             }
         }
     }
