@@ -64,16 +64,10 @@ pipeline {
                 }
             }
         }
-        stage ('WAIT') {
-            steps {
-                input('Do you want to proceed?')
-            }
-        }
         stage ('Database tests') {
             steps {
                 script {
-                    sh 'docker network ls'
-                    sh 'docker run --network=puzzlingorangutan_default --name database_tests docker_test_image -m pytest -k pymongo -v --junitxml=pymongo_results.xml automated_tests'
+                    sh 'docker run --network=`basename $(pwd)_default` --name database_tests docker_test_image -m pytest -k pymongo -v --junitxml=pymongo_results.xml automated_tests'
                 }
             }
             post {
