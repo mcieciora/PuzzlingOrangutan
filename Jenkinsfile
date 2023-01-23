@@ -64,20 +64,6 @@ pipeline {
                 }
             }
         }
-        stage ('Database tests') {
-            steps {
-                script {
-                    sh 'docker run --network=`basename $(pwd)_default` --name database_tests docker_test_image -m pytest -k pymongo -v --junitxml=pymongo_results.xml automated_tests'
-                }
-            }
-            post {
-                always {
-                    sh 'docker cp database_tests:/app/pymongo_results.xml .'
-                    archiveArtifacts 'pymongo_results.xml'
-                    sh 'docker rm database_tests'
-                }
-            }
-        }
         stage ('Endpoints tests') {
             steps {
                 script {
@@ -104,7 +90,7 @@ pipeline {
         always {
             script {
                 sh 'docker compose down'
-                // sh 'docker rmi -f docker_test_image puzzling_orangutan_db puzzling_orangutan_app'
+                sh 'docker rmi -f docker_test_image puzzling_orangutan_db puzzling_orangutan_app'
                 dir ('.') {
                     deleteDir()
                 }

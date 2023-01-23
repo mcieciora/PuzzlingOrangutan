@@ -5,6 +5,7 @@ jenkins:
   scmCheckoutRetryCount: 1
   labelString: "master"
   crumbIssuer: "standard"
+  quietPeriod: 0
   securityRealm:
     local:
       allowsSignup: false
