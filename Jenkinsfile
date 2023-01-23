@@ -91,10 +91,10 @@ pipeline {
             script {
                 sh 'docker compose down'
                 sh 'docker rmi -f docker_test_image puzzling_orangutan_db puzzling_orangutan_app'
+                junit '*.xml'
                 dir ('.') {
                     deleteDir()
                 }
-                junit '*.xml'
             }
         }
     }
