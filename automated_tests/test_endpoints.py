@@ -11,9 +11,9 @@ class TestEndpointsClass:
     def teardown_class():
         """
         Teardown function clearing database collection after testing.
-        :return:
+        :return: None
         """
-        with open('test_key', 'r', encoding='utf-8') as secret_key_file:
+        with open('automated_tests/test_key', 'r', encoding='utf-8') as secret_key_file:
             secret_key = secret_key_file.read()
         get(f"http://localhost:8007/clear/{secret_key}", timeout=5)
 
