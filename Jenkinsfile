@@ -47,11 +47,17 @@ pipeline {
                         }
                     }
                 }
-                stage ('Code linting') {
+                stage ('Code linting - src/') {
+                    steps {
+                        script {
+                            sh 'docker run --rm docker_test_image -m pylint src --max-line-length=120 --disable=C0114,E0401'
+                        }
+                    }
+                }
+                stage ('Code linting - automated_tests/') {
                     steps {
                         script {
                             sh 'docker run --rm docker_test_image -m pylint automated_tests --max-line-length=120 --disable=C0114,E0401'
-                            sh 'docker run --rm docker_test_image -m pylint src --max-line-length=120 --disable=C0114,E0401'
                         }
                     }
                 }
