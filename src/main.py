@@ -95,12 +95,12 @@ def clear(secret_key):
     :param secret_key: Secret key that is compared to value stored in secret_key file
     :return:
     """
-    with open('secret_key', 'r') as secret_key_file:
+    with open('secret_key', 'r', encoding='utf-8') as secret_key_file:
         if secret_key_file.read() == secret_key:
             mongo_client.clear()
-            return_value = {"status": 200, "message": f"Collection has been dropped."}
+            return_value = {"status": 200, "message": "Collection has been dropped."}
         else:
-            return_value = {"status": 400, "message": f"Wrong secret key value."}
+            return_value = {"status": 400, "message": "Wrong secret key value."}
     return dict(data=return_value)
 
 
