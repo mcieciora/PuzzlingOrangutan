@@ -3,10 +3,17 @@ from pytest import mark
 
 
 class TestEndpointsClass:
-
+    """
+    TestEndpointsClass contains main, create_user, get_subscriptions, get_service, create_service, subscribe
+    endpoints tests
+    """
     @staticmethod
     def teardown_class():
-        with open('test_key', 'r') as secret_key_file:
+        """
+        Teardown function clearing database collection after testing.
+        :return:
+        """
+        with open('test_key', 'r', encoding='utf-8') as secret_key_file:
             secret_key = secret_key_file.read()
         get(f"http://localhost:8007/clear/{secret_key}", timeout=5)
 
