@@ -88,6 +88,22 @@ def get_services():
     return return_dict
 
 
+@route("/clear/<secret_key>")
+def clear(secret_key):
+    """
+    Clear endpoint.
+    :param secret_key: Secret key that is compared to value stored in secret_key file
+    :return:
+    """
+    with open('secret_key', 'r') as secret_key_file:
+        if secret_key_file.read() == secret_key:
+            mongo_client.clear()
+            return_value = {"status": 200, "message": f"Collection has been dropped."}
+        else:
+            return_value = {"status": 400, "message": f"Wrong secret key value."}
+    return dict(data=return_value)
+
+
 if __name__ == "__main__":
     mongo_client = MongoDb("puzzling_orangutan", "main")
     run(host="0.0.0.0", port=8007)

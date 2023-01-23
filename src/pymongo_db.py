@@ -8,7 +8,9 @@ class MongoDb:
     MongoDB is a class to operate on database with usage of pymongo library.
     """
     def __init__(self, db_name, collection_name):
-        self.mongo = MongoClient(host="mongodb", port=27017)
+        self.db_name = db_name
+        self.collection_name = collection_name
+        self.mongo = MongoClient(host="localhost", port=27017)
         self.collection = self.mongo[db_name][collection_name]
 
     def find(self, query):
@@ -73,3 +75,10 @@ class MongoDb:
         else:
             raise ServiceIsAlreadySubscribed
         self.collection.update_one({"username": username}, {"$set": updated_query})
+
+    def clear(self):
+        """
+        Clear function clears out whole collection.
+        :return: None
+        """
+        self.mongo[self.db_name].drop_collection(self.collection_name)

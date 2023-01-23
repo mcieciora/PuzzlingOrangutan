@@ -3,7 +3,7 @@ from pytest import mark
 
 
 @mark.endpoints
-def test__check_index_endpoint_status():
+def test__check_index_endpoint_status(endpoints_fixture):
     """
     Verifies: OBJ-14
     :return: None
@@ -15,7 +15,7 @@ def test__check_index_endpoint_status():
 
 
 @mark.endpoints
-def test__create_user_when_username_provided_by_endpoint():
+def test__create_user_when_username_provided_by_endpoint(endpoints_fixture):
     """
     Verifies: OBJ-10
     :return: None
@@ -27,7 +27,7 @@ def test__create_user_when_username_provided_by_endpoint():
 
 
 @mark.endpoints
-def test__cannot_create_user_when_the_same_username_provided_by_endpoint():
+def test__cannot_create_user_when_the_same_username_provided_by_endpoint(endpoints_fixture):
     """
     Verifies: OBJ-11
     :return: None
@@ -39,7 +39,7 @@ def test__cannot_create_user_when_the_same_username_provided_by_endpoint():
 
 
 @mark.endpoints
-def test__get_list_of_all_users_with_subscriptions_by_endpoint():
+def test__get_list_of_all_users_with_subscriptions_by_endpoint(endpoints_fixture):
     """
     Verifies: OBJ-29
     :return: None
@@ -51,7 +51,7 @@ def test__get_list_of_all_users_with_subscriptions_by_endpoint():
 
 
 @mark.endpoints
-def test__create_service_when_service_name_provided_by_endpoint():
+def test__create_service_when_service_name_provided_by_endpoint(endpoints_fixture):
     """
     Verifies: OBJ-13
     :return: None
@@ -63,7 +63,7 @@ def test__create_service_when_service_name_provided_by_endpoint():
 
 
 @mark.endpoints
-def test__create_service_when_username_provided_by_endpoint():
+def test__create_service_when_username_provided_by_endpoint(endpoints_fixture):
     """
     Verifies: OBJ-12
     :return: None
@@ -75,7 +75,7 @@ def test__create_service_when_username_provided_by_endpoint():
 
 
 @mark.endpoints
-def test__subscribe_to_service_with_proper_values_by_endpoint():
+def test__subscribe_to_service_with_proper_values_by_endpoint(endpoints_fixture):
     """
     Verifies: OBJ-15
     :return: None
@@ -87,7 +87,7 @@ def test__subscribe_to_service_with_proper_values_by_endpoint():
 
 
 @mark.endpoints
-def test__subscribe_service_with_wrong_username_provided_by_endpoint():
+def test__subscribe_service_with_wrong_username_provided_by_endpoint(endpoints_fixture):
     """
     Verifies: OBJ-16
     :return: None
@@ -99,7 +99,7 @@ def test__subscribe_service_with_wrong_username_provided_by_endpoint():
 
 
 @mark.endpoints
-def test__subscribe_service_with_wrong_service_name_provided_by_endpoint():
+def test__subscribe_service_with_wrong_service_name_provided_by_endpoint(endpoints_fixture):
     """
     Verifies: OBJ-17
     :return: None
@@ -111,7 +111,7 @@ def test__subscribe_service_with_wrong_service_name_provided_by_endpoint():
 
 
 @mark.endpoints
-def test__subscribe_service_with_already_active_subscription_by_endpoint():
+def test__subscribe_service_with_already_active_subscription_by_endpoint(endpoints_fixture):
     """
     Verifies: OBJ-18
     :return: None
@@ -123,7 +123,7 @@ def test__subscribe_service_with_already_active_subscription_by_endpoint():
 
 
 @mark.endpoints
-def test__get_list_of_all_users_with_active_subscriptions_by_endpoint():
+def test__get_list_of_all_users_with_active_subscriptions_by_endpoint(endpoints_fixture):
     """
     Verifies: OBJ-29
     :return: None
@@ -135,7 +135,7 @@ def test__get_list_of_all_users_with_active_subscriptions_by_endpoint():
 
 
 @mark.endpoints
-def test__get_list_of_all_services_by_endpoint():
+def test__get_list_of_all_services_by_endpoint(endpoints_fixture):
     """
     Verifies: OBJ-14
     :return: None

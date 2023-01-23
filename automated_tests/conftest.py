@@ -1,13 +1,14 @@
 from pytest import fixture
-from src.pymongo_db import MongoDb
+from requests import get
 
 
 @fixture(scope="module")
-def test_db():
+def endpoints_fixture():
     """
-    Test fixture yielding MongoDb object with 'test_db' database and 'test_collection' collection
+    Test fixture clearing database collection at the end of test execution
     :return: MongoDb object
     """
-    return_database = MongoDb("puzzling_orangutan", "main")
-    yield return_database
-    return_database.mongo["puzzling_orangutan"].drop_collection("main")
+    yield
+    with open('test_key', 'r') as secret_key_file:
+        secret_key = secret_key_file.read()
+    get(f"http://localhost:8007/clear/{secret_key}", timeout=5)
