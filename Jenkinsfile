@@ -37,6 +37,16 @@ pipeline {
         }
         stage ('Test preparation') {
             parallel {
+                stage ('Scan for skipped tests') {
+                    steps {
+                        script {
+                            def scan_for_skips = sh(script: 'docker run --rm docker_test_image automated_tests/tools/scan_for_skipped_tests.py', returnStdout: true)
+                            if (scan_for_skips.contains('[ERR]')) {
+                                error("${scan_for_skips}")
+                            }
+                        }
+                    }
+                }
                 stage ('Verify requirements') {
                     steps {
                         script {
@@ -87,7 +97,10 @@ pipeline {
         stage ('Upload results') {
             steps {
                 script {
-                    echo 'Upload results to ExultantRhino if develop|master|release branch'
+                    def reqs_verification = sh(script: 'docker run --rm docker_test_image automated_tests/tools/results_upload.py --project_name PuzzlingOrangutan --release_name ${env.BRANCH_NAME}_${env.BUILD_NUMBER}', returnStdout: true)
+                    if (reqs_verification.contains('[ERR]')) {
+                        error("${reqs_verification}")
+                    }
                 }
             }
         }

@@ -1,6 +1,6 @@
 version: '3.9'
 services:
-  app:
+  jenkins:
     image:  jenkins_dockerized
     container_name: jenkins
     restart: unless-stopped
@@ -17,3 +17,11 @@ services:
       - //var/run/docker.sock:/var/run/docker.sock
     environment:
       - CASC_JENKINS_CONFIG=/var/jenkins_conf
+  registry:
+    image: registry:2
+    ports:
+    - "5000:5000"
+    environment:
+      REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /data
+    volumes:
+      - ./registry:/data
