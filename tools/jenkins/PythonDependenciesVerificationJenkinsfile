@@ -6,7 +6,7 @@ pipeline {
         string(name: 'BRANCH', defaultValue: 'develop', description: "Execution branch")
     }
     environment {
-        REPO_URL = "git@github.com:mcieciora/CarelessVaquita.git"
+        REPO_URL = "git@github.com:mcieciora/PuzzlingOrangutan.git"
     }
     options {
         skipDefaultCheckout()

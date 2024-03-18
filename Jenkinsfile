@@ -7,7 +7,7 @@ pipeline {
         TEST_GROUPS = getValue("TEST_GROUP", "all")
         REGULAR_BUILD = getValue("REGULAR_BUILD", true)
         BRANCH_TO_USE = getValue("BRANCH", env.BRANCH_NAME)
-        REPO_URL = "git@github.com:mcieciora/CarelessVaquita.git"
+        REPO_URL = "git@github.com:mcieciora/PuzzlingOrangutan.git"
     }
     options {
         skipDefaultCheckout()
