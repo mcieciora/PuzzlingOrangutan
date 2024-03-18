@@ -1,0 +1,24 @@
+<filetype binary="false" description="Jenkinsfile support" name="Jenkinsfile">
+  <highlighting>
+    <options>
+      <option name="LINE_COMMENT" value="//" />
+      <option name="COMMENT_START" value="/*" />
+      <option name="COMMENT_END" value="*/" />
+      <option name="HEX_PREFIX" value="" />
+      <option name="NUM_POSTFIXES" value="" />
+      <option name="HAS_BRACES" value="true" />
+      <option name="HAS_BRACKETS" value="true" />
+      <option name="HAS_PARENS" value="true" />
+      <option name="HAS_STRING_ESCAPES" value="true" />
+      <option name="LINE_COMMENT_AT_START" value="true" />
+    </options>
+    <keywords keywords="agent;always;axes;axis;expression;failure;matrix;parallel;script;steps;when;triggers" />
+    <keywords2 keywords="catch;finally;parameters;environment;options;pipeline;post;stage;stages;try" />
+    <keywords3 keywords="echo;name;print;sh;values" />
+    <keywords4 keywords="def;else;if;import;return" />
+  </highlighting>
+  <extensionMap>
+    <mapping pattern="Jenkinsfile" />
+    <mapping pattern="*.jenkinsfile" />
+  </extensionMap>
+</filetype>

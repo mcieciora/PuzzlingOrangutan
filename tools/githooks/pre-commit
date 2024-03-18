@@ -1,0 +1,43 @@
+#!/bin/sh
+
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACMR | sed 's| |\\ |g')
+
+echo "Running detect_jenkinsfile_change.sh..."
+tools/githooks_scripts/detect_jenkinsfile_change.sh
+
+echo "Running check_jenkinsfiles.sh..."
+tools/githooks_scripts/check_jenkinsfiles.sh
+JENKINSFILE_CHECK_EXIT_CODE=$?
+
+if [ $JENKINSFILE_CHECK_EXIT_CODE -ne 0 ]; then
+    echo "[ERROR] Jenkinsfile check failed."
+    exit 1
+else
+    echo "[INFO] Jenkinsfile check succeeded."
+fi
+
+echo "Running Dockerfiles linting..."
+tools/githooks_scripts/lint_docker_files.sh
+DOCKERFILE_CHECK_EXIT_CODE=$?
+
+if [ $DOCKERFILE_CHECK_EXIT_CODE -ne 0 ]; then
+    echo "[ERROR] Dockerfiles check failed."
+    exit 1
+else
+    echo "[INFO] Dockerfiles check succeeded."
+fi
+
+echo "Running lint_python.sh..."
+tools/githooks_scripts/lint_python.sh
+PYTHON_LINTING_EXIT_CODE=$?
+
+if [ $PYTHON_LINTING_EXIT_CODE -ne 0 ]; then
+    echo "[ERROR] Python code linting failed."
+    exit 1
+else
+    echo "[INFO] Python code linting succeeded."
+fi
+
+git add -f "$STAGED_FILES"
+
+exit 0
